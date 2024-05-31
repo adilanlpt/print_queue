@@ -3,28 +3,7 @@ const fs = require('fs');
 const io = require('socket.io-client');
 const PDFDocument  = require('pdfkit');
 const { getPrinters, print } = require('pdf-to-printer');
-const os = require('os');
 require('dotenv').config();
-
-// Get network interfaces
-const networkInterfaces = os.networkInterfaces();
-
-// Function to get the server IP addresses
-const getServerIpAddresses = () => {
-  const addresses = [];
-
-  for (const interfaceName in networkInterfaces) {
-    const interfaceInfo = networkInterfaces[interfaceName];
-
-    for (const info of interfaceInfo) {
-      if (info.family === 'IPv4' && !info.internal) {
-        addresses.push(info.address);
-      }
-    }
-  }
-
-  return addresses;
-};
 
 const socket = io(`${process.env.SOCKET_URI}/printer`);
 
@@ -69,14 +48,14 @@ function createqueue(ward,queue,qlength) {
 }
 
 
-socket.on('getprinter', () => {
+socket.on('getprinter', async() => {
 
     getPrinters()
     .then(result=>{
         socket.emit('printer', result);
     })
-    .catch(() => {
-        socket.emit('printer', {});
+    .catch((err) => {
+        socket.emit('printer', []);
     });
 });
 
