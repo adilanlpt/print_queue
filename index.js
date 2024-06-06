@@ -7,7 +7,10 @@ require('dotenv').config();
 
 const socket = io(`${process.env.SOCKET_URI}/printer`);
 
-function createqueue(ward,queue,qlength) {
+function createqueue(ward, room, queue,qlength) {
+
+    queue = `${queue.match(/[a-zA-Z]+/g)?queue.match(/[a-zA-Z]+/g)[0]:''}${queue.match(/\d+/g)[0]}`;
+
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({ 
             size: [227, 227] ,
@@ -22,15 +25,21 @@ function createqueue(ward,queue,qlength) {
         doc.lineGap(0);
         doc.fontSize(20).text(ward, {
             align: 'left',
-            fontSize:30
+            fontSize:30,
+            width:100,
+            lineGap:-10
         });
-        doc.fontSize(100).text(queue.toString().padStart(3, '0'),{
+        doc.fontSize(100).text(queue, 0,30,{
             align: 'center'
         });
         doc.fontSize(20).text(`เหลืออีก ${qlength} คิว`, 0,120, {
             align: 'center'
         });
-        doc.text('คิวที่', 35,45,{
+
+        doc.text(`ห้องบริการ: ${room}`, 135,0,{
+            align: 'left'
+        });
+        doc.text('คิวที่', 30,42,{
             align: 'left'
         });
 
@@ -61,7 +70,7 @@ socket.on('getprinter', async() => {
 
 socket.on('print', (data) => {
     try {
-         createqueue(data.ward,data.queue,data.qlength).then((path)=>{
+         createqueue(data.ward,data.room,data.queue,data.qlength).then((path)=>{
             print(path,{printer: data.printer});
         });
     } catch (error) {
