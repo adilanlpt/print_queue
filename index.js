@@ -7,9 +7,9 @@ require('dotenv').config();
 
 const socket = io(`${process.env.SOCKET_URI}/printer`);
 
-function createqueue(ward, room, queue,qlength) {
+function createqueue(data) {
 
-    queue = `${queue.match(/[a-zA-Z]+/g)?queue.match(/[a-zA-Z]+/g)[0]:''}${queue.match(/\d+/g)[0]}`;
+    data.queue = `${data.queue.match(/[a-zA-Z]+/g)?data.queue.match(/[a-zA-Z]+/g)[0]:''}${data.queue.match(/\d+/g)[0]}`;
 
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({ 
@@ -23,25 +23,30 @@ function createqueue(ward, room, queue,qlength) {
         doc.font('./THSarabunNew.ttf'); // เปลี่ยนเป็นฟอนต์ที่คุณต้องการใช้
         // เขียนข้อความลงใน PDF
         doc.lineGap(0);
-        doc.fontSize(20).text(ward, {
-            align: 'left',
-            fontSize:30,
-            width:100,
-            lineGap:-10
-        });
-        doc.fontSize(100).text(queue, 0,30,{
-            align: 'center'
-        });
-        doc.fontSize(20).text(`เหลืออีก ${qlength} คิว`, 0,120, {
-            align: 'center'
-        });
+        for(let i=0;i<data.quntity;i++){
+            doc.fontSize(20).text(data.ward, {
+                align: 'left',
+                fontSize:30,
+                width:100,
+                lineGap:-10
+            });
+            doc.fontSize(100).text(data.queue, 0,30,{
+                align: 'center'
+            });
+            doc.fontSize(20).text(`เหลืออีก ${data.qlength} คิว`, 0,120, {
+                align: 'center'
+            });
+    
+            doc.text(`${data.labelroom}บริการ: ${data.room}`, 135,0,{
+                align: 'left'
+            });
+            doc.text('คิวที่', 30,42,{
+                align: 'left'
+            });
 
-        doc.text(`ห้องบริการ: ${room}`, 135,0,{
-            align: 'left'
-        });
-        doc.text('คิวที่', 30,42,{
-            align: 'left'
-        });
+            doc.addPage()
+            
+        }
 
         // ปิดการเขียน PDF
         doc.end();
@@ -70,7 +75,8 @@ socket.on('getprinter', async() => {
 
 socket.on('print', (data) => {
     try {
-         createqueue(data.ward,data.room,data.queue,data.qlength).then((path)=>{
+
+         createqueue(data).then((path)=>{
             print(path,{printer: data.printer});
         });
     } catch (error) {
