@@ -20,25 +20,30 @@ function createqueue(data) {
         const writeStream = fs.createWriteStream(outputPath);
         doc.pipe(writeStream);
 
-        doc.font('./THSarabunNew.ttf'); // เปลี่ยนเป็นฟอนต์ที่คุณต้องการใช้
+        doc.registerFont('normal', './THSarabunNew.ttf');
+        doc.registerFont('Bold', './THSarabunNew Bold.ttf');
+        doc.font('normal');
         // เขียนข้อความลงใน PDF
         doc.lineGap(0);
         for(let i=0;i<data.quntity;i++){
+
             doc.fontSize(20).text(data.ward, {
                 align: 'left',
                 fontSize:30,
                 width:100,
                 lineGap:-10
             });
+            doc.font('Bold');
+            doc.text(`${data.labelroom}บริการ: `, 135,0,{
+                align: 'left'
+            });
             doc.fontSize(100).text(data.queue, 0,30,{
                 align: 'center'
             });
-            doc.fontSize(20).text(`เหลืออีก ${data.qlength} คิว`, 0,120, {
+            doc.font('normal').fontSize(20);
+            doc.text(data.room, 195,0, {align:'center'});
+            doc.text(`เหลืออีก ${data.qlength} คิว`, 0,120, {
                 align: 'center'
-            });
-    
-            doc.text(`${data.labelroom}บริการ: ${data.room}`, 135,0,{
-                align: 'left'
             });
             doc.text('คิวที่', 30,42,{
                 align: 'left'
@@ -77,7 +82,7 @@ socket.on('print', (data) => {
     try {
 
          createqueue(data).then((path)=>{
-            print(path,{printer: data.printer});
+            // print(path,{printer: data.printer});
         });
     } catch (error) {
         console.log(error)
