@@ -82,7 +82,7 @@ socket.on('print', (data) => {
     try {
 
          createqueue(data).then((path)=>{
-            // print(path,{printer: data.printer});
+            print(path,{printer: data.printer});
         });
     } catch (error) {
         console.log(error)
