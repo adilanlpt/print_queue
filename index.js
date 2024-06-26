@@ -49,7 +49,7 @@ function createqueue(data) {
                 align: 'left'
             });
 
-            doc.addPage()
+            if(i+1<data.quntity)doc.addPage();
             
         }
 
