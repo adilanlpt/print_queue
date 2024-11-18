@@ -13,9 +13,9 @@ function createqueue(data) {
 
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({ 
-            size: [227, 227] ,
-            margins : { top: 0, bottom: 0, left: 10, right: 10 }
-        }); // กำหนดขนาดเป็น A4
+            size: [80 * 2.834645669, 80 * 2.834645669], // Convert mm to points
+            margins: { top: 0, bottom: 0, left: 0, right: 0 }
+        });
         const outputPath = './output.pdf';
         const writeStream = fs.createWriteStream(outputPath);
         doc.pipe(writeStream);
@@ -30,18 +30,18 @@ function createqueue(data) {
             doc.fontSize(20).text(data.ward, {
                 align: 'left',
                 fontSize:30,
-                width:100,
+                width: 40 * 2.834645669,
                 lineGap:-10
             });
             doc.font('Bold');
-            doc.text(`${data.labelroom}บริการ: `, 135,0,{
-                align: 'left'
+            doc.text(`${data.labelroom}บริการ: ${data.room}`, 40 * 2.834645669,0,{
+                align: 'right',
+                width: 40 * 2.834645669,
             });
             doc.fontSize(100).text(data.queue, 0,30,{
                 align: 'center'
             });
             doc.font('normal').fontSize(20);
-            doc.text(data.room, 195,0, {align:'center'});
             doc.text(`เหลืออีก ${data.qlength} คิว`, 0,120, {
                 align: 'center'
             });
