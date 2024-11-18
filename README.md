@@ -12,8 +12,8 @@
    npm install pm2 -g
 2. **ติดตั้ง PM2 Windows Startup สำหรับ Windows, ใช้ pm2-windows-startup เพื่อให้ PM2 เริ่มต้นอัตโนมัติเมื่อระบบเริ่มทำงาน**
    ```bash
-   npm install pm2-windows-startup -g
-   pm2-startup install
+   > npm install pm2-windows-startup -g
+   > pm2-startup install
 3. **คลิกโปรเจกต์ ไปที่โฟลเดอร์โปรเจกต์ที่คุณดาวน์โหลดมา หรือคลิกโฟลเดอร์โปรเจกต์ในเครื่องของคุณ**
     ```bash
    cd /path/to/your/project
